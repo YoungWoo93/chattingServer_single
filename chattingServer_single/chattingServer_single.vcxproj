@@ -188,6 +188,7 @@
     <ClInclude Include="lib\objectPool\subPool.h" />
     <ClInclude Include="lib\objectPool\threadLocalPool.h" />
     <ClInclude Include="lib\redis connector\redisConnector.h" />
+    <ClInclude Include="lockFreeJobQueue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -17,7 +17,8 @@
 #include <stack>
 #include <map>
 
-#include "MemoryPool/MemoryPool/MemoryPool.h"
+//#include "MemoryPool/MemoryPool/MemoryPool.h"
+#include "lib/objectPool/objectPool.h"
 
 #include "errorDefine.h"
 #include "packet.h"
@@ -73,7 +74,15 @@ protected:
 	virtual void OnRecv(UINT64 sessionID, serializer* _packet) = 0;	// < 패킷 수신 완료 후
 	virtual void OnSend(UINT64 sessionID, int sendsize) = 0;        // < 패킷 송신 완료 후
 
-	
+	virtual char getRandKey()
+	{
+		return rand() & 0x000000FF;
+	}
+
+	virtual char getStatickey()
+	{
+		return 0x32; // 50
+	}
 
 	/// <summary>
 	/// 이런방식으로 OnInfo, OnLogging (?) 등 가능할듯? 맞는지는 차후 판단필요
@@ -95,7 +104,9 @@ public:
 	void disconnectReq(session* _sessionPtr);
 
 	void sendReq(UINT64 sessionID, serializer* _packet);
+	void sendReq(vector<UINT64>& sessionIDs, serializer* _packet);
 	void sendReq(UINT64 sessionID, packet _packet);
+	void sendReq(vector<UINT64>& sessionIDs, packet _packet);
 
 	session* findSession(UINT64 sessionID);
 

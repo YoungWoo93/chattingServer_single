@@ -7,9 +7,11 @@
 #include <vector>
 #include <Windows.h>
 
-#include "customDataStructure/customDataStructure/queue_LockFree_TLS.h"
+//#include "customDataStructure/customDataStructure/queue_LockFree_TLS.h"
+#include "lockFreeJobQueue.h"
 
-#include "MemoryPool/MemoryPool/MemoryPool.h"
+//#include "MemoryPool/MemoryPool/MemoryPool.h"
+#include "lib/objectPool/objectPool.h"
 
 using namespace std;
 

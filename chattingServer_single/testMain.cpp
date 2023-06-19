@@ -122,8 +122,6 @@ void main()
 			LOGOUT_EX(logLevel::Info,  LO_CMD, "perfomence") << "\t" << it.first << "\t:\t" << it.second.total << LOGEND;
 		/*/
 
-		cout << "hi " << __VER__ << " logging ver " << endl;
-
 		cout << "\taccept TPS\t: " << s.getAcceptTPS() << "(total " << s.getAcceptTotal() << ")" << endl;
 		cout << "\tsend TPS\t: " << s.getSendMessageTPS() << endl;
 		cout << "\trecv TPS\t: " << s.getRecvMessageTPS() << endl;

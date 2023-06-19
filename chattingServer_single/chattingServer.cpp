@@ -34,6 +34,7 @@ bool chattingServer::OnConnectionRequest(ULONG ip, USHORT port)
 
 void chattingServer::OnRecv(UINT64 sessionID, serializer* _packet)
 {
+	/*/
 	char code;
 	short payloadSize;
 	char key;
@@ -55,12 +56,14 @@ void chattingServer::OnRecv(UINT64 sessionID, serializer* _packet)
 		LOGOUT_EX(logLevel::Error, LO_TXT, "content") << "checkSum error ID " << sessionID << LOGEND;
 	}
 
-
+	/*/
 
 
 	JobStruct* job;
 	WORD type;
+
 	*_packet >> type;
+
 	switch (type)
 	{
 	case 1:
@@ -105,9 +108,6 @@ void chattingServer::OnRecv(UINT64 sessionID, serializer* _packet)
 	}
 
 
-
-
-
 	content->jobQueue.push(job);
 
 	SetEvent(content->hEvent);
@@ -133,8 +133,8 @@ void chattingServer::OnError(int code, const char* msg)
 
 bool chattingServer::sendPacket(UINT64 sessionID, serializer* _packet)
 {
-	_packet->setHeader(getRandKey());
-	_packet->encryption(getStatickey());
+	//_packet->setHeader(getRandKey());
+	//_packet->encryption(getStatickey());
 
 	sendReq(sessionID, _packet);
 
@@ -143,8 +143,8 @@ bool chattingServer::sendPacket(UINT64 sessionID, serializer* _packet)
 
 bool chattingServer::sendPacket(UINT64 sessionID, packet _packet)
 {
-	_packet.setHeader(getRandKey());
-	_packet.encryption(getStatickey());
+	//_packet.setHeader(getRandKey());
+	//_packet.encryption(getStatickey());
 
 	sendReq(sessionID, _packet);
 
@@ -153,8 +153,8 @@ bool chattingServer::sendPacket(UINT64 sessionID, packet _packet)
 
 bool chattingServer::sendPacket(std::vector<UINT64>& sessionIDs, serializer* _packet)
 {
-	_packet->setHeader(getRandKey());
-	_packet->encryption(getStatickey());
+	//_packet->setHeader(getRandKey());
+	//_packet->encryption(getStatickey());
 
 
 	{
@@ -167,8 +167,8 @@ bool chattingServer::sendPacket(std::vector<UINT64>& sessionIDs, serializer* _pa
 
 bool chattingServer::sendPacket(std::vector<UINT64>& sessionIDs, packet _packet)
 {
-	_packet.setHeader(getRandKey());
-	_packet.encryption(getStatickey());
+	//_packet.setHeader(getRandKey());
+	//_packet.encryption(getStatickey());
 
 	{
 		for (auto sessionID : sessionIDs) {

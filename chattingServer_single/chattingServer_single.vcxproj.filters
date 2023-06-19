@@ -172,5 +172,8 @@
     <ClInclude Include="chattingServer.h">
       <Filter>소스 파일\server</Filter>
     </ClInclude>
+    <ClInclude Include="lockFreeJobQueue.h">
+      <Filter>소스 파일\content</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

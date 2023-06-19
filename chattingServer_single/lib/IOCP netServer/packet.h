@@ -2,7 +2,8 @@
 
 #include "serializer.h"
 
-#include "MemoryPool/MemoryPool/MemoryPool.h"
+//#include "MemoryPool/MemoryPool/MemoryPool.h"
+#include "lib/objectPool/objectPool.h"
 
 #include "lib/monitoringTools/messageLogger.h"
 #include "lib/monitoringTools/performanceProfiler.h"

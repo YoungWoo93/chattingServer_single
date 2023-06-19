@@ -7,15 +7,16 @@
 #include <cwchar>
 #include <Windows.h>
 
-#ifdef _DEBUG
-#pragma comment(lib, "MemoryPoolD")
+//#ifdef _DEBUG
+//#pragma comment(lib, "MemoryPoolD")
+//
+//#else
+//#pragma comment(lib, "MemoryPool")
+//
+//#endif
 
-#else
-#pragma comment(lib, "MemoryPool")
-
-#endif
-
-#include "customDataStructure/customDataStructure/queue_LockFree_TLS.h"
+//#include "customDataStructure/customDataStructure/queue_LockFree_TLS.h"
+#include "lockFreeJobQueue.h"
 
 #include "lib/monitoringTools/messageLogger.h"
 #include "lib/monitoringTools/performanceProfiler.h"

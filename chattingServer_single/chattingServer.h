@@ -24,15 +24,7 @@ public:
 	bool sendPacket(std::vector<UINT64>& sessionIDs, serializer* _packet);
 	bool sendPacket(std::vector<UINT64>& sessionIDs, packet _packet);
 
-	inline char getRandKey()
-	{
-		return rand() & 0x000000FF;
-	}
-
-	inline char getStatickey()
-	{
-		return 0x32; // 50
-	}
+	
 	
 	chattingContent* content;
 };

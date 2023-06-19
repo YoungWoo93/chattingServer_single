@@ -1,9 +1,10 @@
 #include <string.h>
-#define __VER__ (strrchr(__FILE__, '_') ? strrchr(__FILE__, '_') + 1 : __FILE__)
 #define _USE_LOGGER_
 
 #pragma comment(lib, "ws2_32")
-#pragma comment(lib, "MemoryPool")
+//#pragma comment(lib, "MemoryPool")
+//#include "MemoryPool/MemoryPool/MemoryPool.h"
+
 
 #include "network.h"
 
@@ -12,7 +13,8 @@
 #include <stack>
 #include <unordered_map>
 
-#include "MemoryPool/MemoryPool/MemoryPool.h"
+
+#include "lib/objectPool/objectPool.h"
 
 #include "lib/monitoringTools/messageLogger.h"
 #include "lib/monitoringTools/performanceProfiler.h"
@@ -81,6 +83,8 @@ bool Network::start(const USHORT port, const UINT16 maxSessionSize,
 		return false;
 	}
 
+
+
 	linger l;
 	l.l_linger = 0;
 	l.l_onoff = 1;
@@ -89,6 +93,8 @@ bool Network::start(const USHORT port, const UINT16 maxSessionSize,
 
 	int optVal = 0;
 	setsockopt(listen_socket, SOL_SOCKET, SO_SNDBUF, (char*)&optVal, sizeof(optVal));
+
+
 
 	SOCKADDR_IN serverAddr;
 	memset(&serverAddr, 0, sizeof(serverAddr));
@@ -357,6 +363,28 @@ DWORD WINAPI Network::workerThread(LPVOID arg)
 					break;
 				}
 
+
+				{
+					char code;
+					short payloadSize;
+					char key;
+					char checkSum;
+
+					*p >> code >> payloadSize >> key;
+
+
+					if (p->decryption(core->getStatickey()))
+					{
+						*p >> checkSum;
+					}
+					else
+					{
+						LOGOUT_EX(logLevel::Error, LO_TXT, "content") << "checkSum error ID " << sessionPtr->ID << LOGEND;
+						core->disconnectReq(sessionPtr);
+					}
+				}
+				
+
 				core->recvMessageTPSArr[threadIndex]++;
 				core->OnRecv(sessionPtr->ID, p);
 
@@ -506,13 +534,12 @@ void Network::disconnectReq(session* _sessionPtr)
 
 void Network::sendReq(UINT64 sessionID, serializer* _packet)
 {
-
 	session* _sessionPtr = findSession(sessionID);
-
-
 	if (_sessionPtr == nullptr)
 		return;
 
+	_packet->setHeader(getRandKey());
+	_packet->encryption(getStatickey());
 
 	_packet->incReferenceCounter();
 	_sessionPtr->incrementIO();
@@ -528,11 +555,11 @@ void Network::sendReq(UINT64 sessionID, serializer* _packet)
 void Network::sendReq(UINT64 sessionID, packet _packet)
 {
 	session* _sessionPtr = findSession(sessionID);
-
-
 	if (_sessionPtr == nullptr)
 		return;
 
+	_packet.setHeader(getRandKey());
+	_packet.encryption(getStatickey());
 
 	_packet.incReferenceCounter();
 	_sessionPtr->incrementIO();
@@ -543,4 +570,50 @@ void Network::sendReq(UINT64 sessionID, packet _packet)
 
 	if (_sessionPtr->decrementIO() == 0)
 		deleteSession(_sessionPtr);
+}
+
+void Network::sendReq(vector<UINT64>& sessionIDs, serializer* _packet)
+{
+	_packet->setHeader(getRandKey());
+	_packet->encryption(getStatickey());
+
+	for (auto sessionID : sessionIDs) {
+		session* _sessionPtr = findSession(sessionID);
+		if (_sessionPtr == nullptr)
+			continue;
+
+
+		_packet->incReferenceCounter();
+		_sessionPtr->incrementIO();
+
+
+		auto reqValue = ((unsigned long long int)_packet | (unsigned long long int)reqEvents::sendReq);
+		PostQueuedCompletionStatus(IOCP, 0, (ULONG_PTR)_sessionPtr, (LPOVERLAPPED)reqValue);
+
+		if (_sessionPtr->decrementIO() == 0)
+			deleteSession(_sessionPtr);
+	}
+}
+
+void Network::sendReq(vector<UINT64>& sessionIDs, packet _packet)
+{
+	_packet.setHeader(getRandKey());
+	_packet.encryption(getStatickey());
+
+	for (auto sessionID : sessionIDs) {
+		session* _sessionPtr = findSession(sessionID);
+		if (_sessionPtr == nullptr)
+			continue;
+
+
+		_packet.incReferenceCounter();
+		_sessionPtr->incrementIO();
+
+
+		auto reqValue = ((unsigned long long int)_packet.buffer | (unsigned long long int)reqEvents::sendReq);
+		PostQueuedCompletionStatus(IOCP, 0, (ULONG_PTR)_sessionPtr, (LPOVERLAPPED)reqValue);
+
+		if (_sessionPtr->decrementIO() == 0)
+			deleteSession(_sessionPtr);
+	}
 }
