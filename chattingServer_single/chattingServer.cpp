@@ -1,11 +1,9 @@
 #ifdef _DEBUG
 #pragma comment(lib, "MemoryPoolD")
-#pragma comment(lib, "crashDumpD")
 #pragma comment(lib, "IOCPD")
 
 #else
 #pragma comment(lib, "MemoryPool")
-#pragma comment(lib, "crashDump")
 #pragma comment(lib, "IOCP")
 
 #endif

@@ -3,24 +3,12 @@
 #include <fcntl.h>
 
 #include <thread>
-
+#include <queue>
 
 
 #include "chattingServer.h"
 #include "chattingContent.h"
 
-#include "crashDump/crashDump/crashDump.h"
-
-#include "monitoringTools/monitoringTools/messageLogger.h"
-#include "monitoringTools/monitoringTools/performanceProfiler.h"
-#include "monitoringTools/monitoringTools/resourceMonitor.h"
-
-#ifdef _DEBUG
-#pragma comment(lib, "crashDumpD")
-#else
-#pragma comment(lib, "crashDump")
-#endif
-#pragma comment(lib, "monitoringTools\\x64\\Release\\monitoringTools")
 
 using namespace std;
 
@@ -32,7 +20,7 @@ void printDay(UINT64 tick)
 	tick /= 60;
 	int min = tick % 60;
 	tick /= 60;
-	int hour = tick % 60;
+	int hour = tick % 24;
 	tick /= 24;
 	UINT64 days = tick;
 
@@ -49,7 +37,7 @@ int packetRecvCount;
 void main()
 {
 	setlocale(LC_ALL, "");
-	CCrashDump cd;
+	dump d;
 	chattingServer s;
 	chattingContent c;
 	resourceMonitor m;
@@ -67,21 +55,36 @@ void main()
 	UINT64 startTime = GetTickCount64();
 	unsigned long long int pastTick = startTime;
 	Sleep(1000);
-	UINT64 tpsSum = 0;
-	UINT64 jobQSum = 0;
-	UINT64 tick = 0;
+
+	queue<UINT64> jobTpsQueue;
+	UINT64 jobTpsSum = 0;
+
+	queue<UINT64> jobQSizeQueue;
+	UINT64 jobQSizeSum = 0;
 	for (;;) {
-		tick++;
 		unsigned long long int nowTick = GetTickCount64();
 		UINT64 currentTime = nowTick - startTime;
 		auto packtPoolPair = packetPoolMemoryCheck();
+		UINT64 jobQSize = c.jobQueue.size();
 		UINT64 jobTPS = c.jobTPS * 1000 / (nowTick - pastTick);
-		if (tick > 60)
+		c.jobTPS = 0;
+
+		if (jobQSizeQueue.size() > 3600)
 		{
-			tpsSum += jobTPS;
-			jobQSum += c.jobQueue.size();
+			jobQSizeSum -= jobQSizeQueue.front();
+			jobQSizeQueue.pop();
+		
+			jobTpsSum -= jobTpsQueue.front();
+			jobTpsQueue.pop();
 		}
-		printDay(currentTime);
+		jobQSizeSum += jobQSize;
+		jobQSizeQueue.push(jobQSize);
+
+		jobTpsSum += jobTPS;
+		jobTpsQueue.push(jobTPS);
+		
+
+		printDay(nowTick);
 		//
 		LOGOUT(logLevel::Info, LO_CMD) << "hi " << __VER__ << " logging ver " << LOGEND;
 
@@ -95,9 +98,9 @@ void main()
 		LOGOUT(logLevel::Info, LO_CMD) << "\tuserDataPool\t: " << c.userPool.GetUseCount() << "/" << c.userPool.GetCapacityCount() << LOGEND;
 
 		LOGOUT_EX(logLevel::Info, LO_TXT | LO_CMD, "perfomence") << "\tjob TPS\t\t:\t" << jobTPS << LOGEND;
-		LOGOUT_EX(logLevel::Info, LO_TXT | LO_CMD, "perfomence") << "\tjob TPS avr\t:\t" << tpsSum / (tick - 60) << LOGEND;
+		LOGOUT_EX(logLevel::Info, LO_TXT | LO_CMD, "perfomence") << "\tjob TPS avr\t:\t" << jobTpsSum / jobTpsQueue.size() << LOGEND;
 		LOGOUT_EX(logLevel::Info, LO_TXT | LO_CMD, "perfomence") << "\tjobQ size\t:\t" << c.jobQueue.size() << LOGEND;
-		LOGOUT_EX(logLevel::Info, LO_TXT | LO_CMD, "perfomence") << "\tjobQ size avr\t:\t" << jobQSum / (tick - 60) << LOGEND;
+		LOGOUT_EX(logLevel::Info, LO_TXT | LO_CMD, "perfomence") << "\tjobQ size avr\t:\t" << jobQSizeSum / jobQSizeQueue.size() << LOGEND;
 		LOGOUT_EX(logLevel::Info, LO_TXT | LO_CMD, "perfomence") << "\tmemory use\t:\t" << m.getUserMemorySize() << LOGEND;
 
 		LOGOUT_EX(logLevel::Info, LO_TXT | LO_CMD, "perfomence") << "CPU rate : " << m.getAllCPURate()->total << LOGEND;
@@ -105,7 +108,7 @@ void main()
 			LOGOUT_EX(logLevel::Info, LO_TXT | LO_CMD, "perfomence") << "\t" << it.first << "\t:\t" << it.second.total << LOGEND;
 
 		pastTick = nowTick;
-		c.jobTPS = 0;
+		
 		Sleep(1000);
 	}
 	c.run = false;
