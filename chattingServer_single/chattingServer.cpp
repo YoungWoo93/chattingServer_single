@@ -1,21 +1,10 @@
-#ifdef _DEBUG
-#pragma comment(lib, "MemoryPoolD")
-#pragma comment(lib, "IOCPD")
-
-#else
-#pragma comment(lib, "MemoryPool")
-#pragma comment(lib, "IOCP")
-
-#endif
-
 
 #include "chattingServer.h"
 #include "chattingContent.h"
 
-#include "monitoringTools/monitoringTools/messageLogger.h"
-#include "monitoringTools/monitoringTools/performanceProfiler.h"
-#include "monitoringTools/monitoringTools/resourceMonitor.h"
-#pragma comment(lib, "monitoringTools\\x64\\Release\\monitoringTools")
+#include "lib/monitoringTools/messageLogger.h"
+#include "lib/monitoringTools/performanceProfiler.h"
+#include "lib/monitoringTools/resourceMonitor.h"
 
 extern int jobPushCount;
 extern int packetRecvCount;
@@ -55,24 +44,69 @@ void chattingServer::OnRecv(UINT64 sessionID, serializer* _packet)
 	//
 	// 패킷 누수 발생시 이곳부터 의심하자
 	// 
-	JobStruct* job = content->jopPool.New(jobID::packetProcess, sessionID, _packet);
-	if (job->_serializer->referenceCounter != 1)
-	{
-		int i = 0;
-		i++;
-	}
 
-	{
-		decryption(&(((serializer::packetHeader*)_packet->getBufferPtr())->checkSum), payloadSize + 1, &((serializer::packetHeader*)_packet->getBufferPtr())->checkSum, getStatickey(), key);
 
+	if (_packet->decryption(getStatickey()))
+	{
 		*_packet >> checkSum;
-		char temp = 0;
-		for (int i = 0; i < payloadSize; i++)
-			temp += (_packet->getBufferPtr() + sizeof(serializer::packetHeader))[i];
-
-		if (checkSum != temp)
-			LOGOUT_EX(logLevel::Error, LO_TXT, "content") << "checkSum error ID " << sessionID << LOGEND;
 	}
+	else
+	{
+		LOGOUT_EX(logLevel::Error, LO_TXT, "content") << "checkSum error ID " << sessionID << LOGEND;
+	}
+
+
+
+
+	JobStruct* job;
+	WORD type;
+	*_packet >> type;
+	switch (type)
+	{
+	case 1:
+	{
+		//job = content->jopPool.New(jobID::login, sessionID, _packet);
+
+
+		job = content->jopPool.New(jobID::login, sessionID, _packet);
+		*_packet >> job->accountNo;
+		job->contentID = (WCHAR*)_packet->getHeadPtr();
+		_packet->moveFront(sizeof(WCHAR) * 20);
+		job->contentNickname = (WCHAR*)_packet->getHeadPtr();
+		_packet->moveFront(sizeof(WCHAR) * 20);
+		job->sessionKey = _packet->getHeadPtr();
+
+		break;
+	}
+
+	case 3:
+	{
+		job = content->jopPool.New(jobID::moveSector, sessionID, _packet);
+		*_packet >> job->accountNo >> job->sectorX >> job->sectorY;
+		break;
+	}
+
+	case 5:
+	{
+		job = content->jopPool.New(jobID::sendMessage, sessionID, _packet);
+		*_packet >> job->accountNo >> job->msgLen;
+
+		job->message = (WCHAR*)_packet->getHeadPtr();
+
+		break;
+	}
+
+	default:
+	{
+		LOG(logLevel::Error, LO_TXT, "비 정의 프로토콜");
+		disconnectReq(sessionID);
+		return;
+	}
+	}
+
+
+
+
 
 	content->jobQueue.push(job);
 
@@ -99,18 +133,18 @@ void chattingServer::OnError(int code, const char* msg)
 
 bool chattingServer::sendPacket(UINT64 sessionID, serializer* _packet)
 {
-	int payloadSize = _packet->size();
+	_packet->setHeader(getRandKey());
+	_packet->encryption(getStatickey());
 
-	((serializer::packetHeader*)_packet->getBufferPtr())->checkSum = 0;
-	for (int i = 0; i < payloadSize; i++)
-		((serializer::packetHeader*)_packet->getBufferPtr())->checkSum += (_packet->getBufferPtr() + sizeof(serializer::packetHeader))[i];
-	char key = getRandKey();
+	sendReq(sessionID, _packet);
 
-	((serializer::packetHeader*)_packet->getBufferPtr())->size = payloadSize;
-	((serializer::packetHeader*)_packet->getBufferPtr())->randKey = key;
-	encryption(&(((serializer::packetHeader*)_packet->getBufferPtr())->checkSum), payloadSize + 1, &(((serializer::packetHeader*)_packet->getBufferPtr())->checkSum), getStatickey(), key);
-	setHeader(_packet);
+	return true;
+}
 
+bool chattingServer::sendPacket(UINT64 sessionID, packet _packet)
+{
+	_packet.setHeader(getRandKey());
+	_packet.encryption(getStatickey());
 
 	sendReq(sessionID, _packet);
 
@@ -119,19 +153,8 @@ bool chattingServer::sendPacket(UINT64 sessionID, serializer* _packet)
 
 bool chattingServer::sendPacket(std::vector<UINT64>& sessionIDs, serializer* _packet)
 {
-	{
-		int payloadSize = _packet->size();
-
-		((serializer::packetHeader*)_packet->getBufferPtr())->checkSum = 0;
-		for (int i = 0; i < payloadSize; i++)
-			((serializer::packetHeader*)_packet->getBufferPtr())->checkSum += (_packet->getBufferPtr() + sizeof(serializer::packetHeader))[i];
-		char key = getRandKey();
-
-		((serializer::packetHeader*)_packet->getBufferPtr())->size = payloadSize;
-		((serializer::packetHeader*)_packet->getBufferPtr())->randKey = key;
-		encryption(&(((serializer::packetHeader*)_packet->getBufferPtr())->checkSum), payloadSize + 1, &(((serializer::packetHeader*)_packet->getBufferPtr())->checkSum), getStatickey(), key);
-		setHeader(_packet);
-	}
+	_packet->setHeader(getRandKey());
+	_packet->encryption(getStatickey());
 
 
 	{
@@ -142,3 +165,15 @@ bool chattingServer::sendPacket(std::vector<UINT64>& sessionIDs, serializer* _pa
 	return true;
 }
 
+bool chattingServer::sendPacket(std::vector<UINT64>& sessionIDs, packet _packet)
+{
+	_packet.setHeader(getRandKey());
+	_packet.encryption(getStatickey());
+
+	{
+		for (auto sessionID : sessionIDs) {
+			sendReq(sessionID, _packet);
+		}
+	}
+	return true;
+}

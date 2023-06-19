@@ -18,7 +18,6 @@
 #include <map>
 
 #include "MemoryPool/MemoryPool/MemoryPool.h"
-//#include "lib/memoryPool/objectPool.h"
 
 #include "errorDefine.h"
 #include "packet.h"
@@ -30,11 +29,9 @@
 #define	MAKE_SESSION_ID(sessionCount, index)	((unsigned long long)index | ((unsigned long long)sessionCount << 48) )
 
 
-//class sessionPtr;
 class session;
 
 class Network {
-	//friend class sessionPtr;
 	friend class session;
 
 public:

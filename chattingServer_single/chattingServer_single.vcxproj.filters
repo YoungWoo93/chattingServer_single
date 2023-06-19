@@ -5,155 +5,172 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="헤더 파일">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="리소스 파일">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="소스 파일\lib">
+      <UniqueIdentifier>{c88e57b2-0792-48f6-9f64-90fd2abff61f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\lib\IOCP netServer">
+      <UniqueIdentifier>{1489c601-34c3-40f8-8f7c-04d72ca9e593}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\lib\monitoringTools">
+      <UniqueIdentifier>{0e31f224-33c7-4c8c-8729-f45320a9e579}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\lib\objectPool">
+      <UniqueIdentifier>{232d0bd1-54f0-424f-bfd4-9079ebab9c6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\lib\redis connector">
+      <UniqueIdentifier>{cc7e4aed-1a24-4377-8b33-e7a0599c66eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\content">
+      <UniqueIdentifier>{16bd3281-35d3-4bb0-a6ca-68c0e62ee0db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\server">
+      <UniqueIdentifier>{4b97aaa8-0db5-44ef-b887-8dd60d800213}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="testMain.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="chattingContent.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="chattingServer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\IOCP netServer\errorDefine.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\IOCP netServer\network.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\IOCP netServer\packet.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\IOCP netServer\ringBuffer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\IOCP netServer\serializer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\IOCP netServer\session.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\monitoringTools\logger\logger.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\monitoringTools\logger\logStructure.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="lib\monitoringTools\dump.cpp">
+      <Filter>소스 파일\lib\monitoringTools</Filter>
     </ClCompile>
     <ClCompile Include="lib\monitoringTools\monitor\CPUMonitoring.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\lib\monitoringTools</Filter>
     </ClCompile>
     <ClCompile Include="lib\monitoringTools\monitor\memoryMonitoring.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\monitoringTools\profiler\profiler.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\monitoringTools\profiler\scopeProfiler.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\monitoringTools\dump.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\lib\monitoringTools</Filter>
     </ClCompile>
     <ClCompile Include="lib\monitoringTools\messageLogger.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\lib\monitoringTools</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\monitoringTools\logger\logStructure.cpp">
+      <Filter>소스 파일\lib\monitoringTools</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\monitoringTools\logger\logger.cpp">
+      <Filter>소스 파일\lib\monitoringTools</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\monitoringTools\profiler\profiler.cpp">
+      <Filter>소스 파일\lib\monitoringTools</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\monitoringTools\profiler\scopeProfiler.cpp">
+      <Filter>소스 파일\lib\monitoringTools</Filter>
     </ClCompile>
     <ClCompile Include="lib\monitoringTools\resourceMonitor.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\lib\monitoringTools</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\IOCP netServer\errorDefine.cpp">
+      <Filter>소스 파일\lib\IOCP netServer</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\IOCP netServer\network.cpp">
+      <Filter>소스 파일\lib\IOCP netServer</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\IOCP netServer\packet.cpp">
+      <Filter>소스 파일\lib\IOCP netServer</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\IOCP netServer\serializer.cpp">
+      <Filter>소스 파일\lib\IOCP netServer</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\IOCP netServer\session.cpp">
+      <Filter>소스 파일\lib\IOCP netServer</Filter>
     </ClCompile>
     <ClCompile Include="lib\redis connector\redisConnector.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\lib\redis connector</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\IOCP netServer\ringBuffer.cpp">
+      <Filter>소스 파일\lib\IOCP netServer</Filter>
+    </ClCompile>
+    <ClCompile Include="chattingContent.cpp">
+      <Filter>소스 파일\content</Filter>
+    </ClCompile>
+    <ClCompile Include="chattingServer.cpp">
+      <Filter>소스 파일\server</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="chattingContent.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="chattingServer.h">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\IOCP netServer\define.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\IOCP netServer\errorDefine.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\IOCP netServer\LockFreeQueue.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\IOCP netServer\LockFreeStack.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\IOCP netServer\network.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\IOCP netServer\packet.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\IOCP netServer\ringBuffer.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\IOCP netServer\serializer.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\IOCP netServer\session.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\monitoringTools\logger\logger.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\monitoringTools\logger\logStructure.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="lib\monitoringTools\monitor\CPUMonitoring.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\monitoringTools\monitor\memoryMonitoring.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\monitoringTools\profiler\profiler.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\monitoringTools\profiler\scopeProfiler.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>소스 파일\lib\monitoringTools</Filter>
     </ClInclude>
     <ClInclude Include="lib\monitoringTools\dump.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>소스 파일\lib\monitoringTools</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\monitoringTools\logger\logStructure.h">
+      <Filter>소스 파일\lib\monitoringTools</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\monitoringTools\logger\logger.h">
+      <Filter>소스 파일\lib\monitoringTools</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\monitoringTools\monitor\memoryMonitoring.h">
+      <Filter>소스 파일\lib\monitoringTools</Filter>
     </ClInclude>
     <ClInclude Include="lib\monitoringTools\messageLogger.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>소스 파일\lib\monitoringTools</Filter>
     </ClInclude>
     <ClInclude Include="lib\monitoringTools\performanceProfiler.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>소스 파일\lib\monitoringTools</Filter>
     </ClInclude>
     <ClInclude Include="lib\monitoringTools\resourceMonitor.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>소스 파일\lib\monitoringTools</Filter>
     </ClInclude>
-    <ClInclude Include="lib\objectPool\chunkBlock.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="lib\monitoringTools\profiler\scopeProfiler.h">
+      <Filter>소스 파일\lib\monitoringTools</Filter>
     </ClInclude>
-    <ClInclude Include="lib\objectPool\chunkPool.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="lib\IOCP netServer\define.h">
+      <Filter>소스 파일\lib\IOCP netServer</Filter>
     </ClInclude>
-    <ClInclude Include="lib\objectPool\objectPool.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="lib\IOCP netServer\LockFreeQueue.h">
+      <Filter>소스 파일\lib\IOCP netServer</Filter>
     </ClInclude>
-    <ClInclude Include="lib\objectPool\subPool.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="lib\IOCP netServer\errorDefine.h">
+      <Filter>소스 파일\lib\IOCP netServer</Filter>
     </ClInclude>
-    <ClInclude Include="lib\objectPool\threadLocalPool.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="lib\IOCP netServer\LockFreeStack.h">
+      <Filter>소스 파일\lib\IOCP netServer</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\IOCP netServer\network.h">
+      <Filter>소스 파일\lib\IOCP netServer</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\IOCP netServer\packet.h">
+      <Filter>소스 파일\lib\IOCP netServer</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\IOCP netServer\ringBuffer.h">
+      <Filter>소스 파일\lib\IOCP netServer</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\IOCP netServer\serializer.h">
+      <Filter>소스 파일\lib\IOCP netServer</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\IOCP netServer\session.h">
+      <Filter>소스 파일\lib\IOCP netServer</Filter>
     </ClInclude>
     <ClInclude Include="lib\redis connector\redisConnector.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>소스 파일\lib\redis connector</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\monitoringTools\profiler\profiler.h">
+      <Filter>소스 파일\lib\monitoringTools</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\objectPool\chunkBlock.h">
+      <Filter>소스 파일\lib\objectPool</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\objectPool\chunkPool.h">
+      <Filter>소스 파일\lib\objectPool</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\objectPool\objectPool.h">
+      <Filter>소스 파일\lib\objectPool</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\objectPool\subPool.h">
+      <Filter>소스 파일\lib\objectPool</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\objectPool\threadLocalPool.h">
+      <Filter>소스 파일\lib\objectPool</Filter>
+    </ClInclude>
+    <ClInclude Include="chattingContent.h">
+      <Filter>소스 파일\content</Filter>
+    </ClInclude>
+    <ClInclude Include="chattingServer.h">
+      <Filter>소스 파일\server</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

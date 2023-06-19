@@ -13,7 +13,6 @@
 #include <unordered_map>
 
 #include "MemoryPool/MemoryPool/MemoryPool.h"
-//#include "lib/memoryPool/objectPool.h"
 
 #include "lib/monitoringTools/messageLogger.h"
 #include "lib/monitoringTools/performanceProfiler.h"
@@ -25,7 +24,6 @@
 #include "packet.h"
 #include "session.h"
 
-// writeMessageBuffer(const char* const _format, ...)
 
 
 
@@ -83,7 +81,6 @@ bool Network::start(const USHORT port, const UINT16 maxSessionSize,
 		return false;
 	}
 
-	//linger l = { 0, 0 };
 	linger l;
 	l.l_linger = 0;
 	l.l_onoff = 1;
@@ -92,10 +89,6 @@ bool Network::start(const USHORT port, const UINT16 maxSessionSize,
 
 	int optVal = 0;
 	setsockopt(listen_socket, SOL_SOCKET, SO_SNDBUF, (char*)&optVal, sizeof(optVal));
-
-	//int nagleOpt = TRUE;
-	//if (setsockopt(listen_socket, IPPROTO_TCP, TCP_NODELAY, (char*)&nagleOpt, sizeof(nagleOpt)) != 0)
-		//LOG(logLevel::Error, LO_TXT, "Error in set Nodelay" + to_string(listen_socket) + " socket, error : " + to_string(GetLastError()));
 
 	SOCKADDR_IN serverAddr;
 	memset(&serverAddr, 0, sizeof(serverAddr));
@@ -131,7 +124,6 @@ bool Network::start(const USHORT port, const UINT16 maxSessionSize,
 		for (int i = maxSession - 1; i >= 0; i--)
 			indexStack.push(i);
 
-		// 성능 개선때 캐시라인 맞추기 (aling) 하는것 고려하기
 		sessionArray = new session[maxSession];
 		for (int i = 0; i < maxSession; i++)
 			sessionArray[i].core = this;
@@ -140,7 +132,6 @@ bool Network::start(const USHORT port, const UINT16 maxSessionSize,
 		recvMessageTPSArr = new unsigned int[workerThreadCount];
 		sendMessageTPSArr = new unsigned int[workerThreadCount];
 
-		//sessionPool.init(maxSession);
 		isRun = true;
 	}
 
@@ -191,8 +182,6 @@ void Network::stop() {
 		CloseHandle(IOCP);
 	}
 
-	//sessionPool.clear();
-
 	WSACleanup();
 }
 
@@ -239,7 +228,6 @@ DWORD WINAPI Network::acceptThread(LPVOID arg) {
 		core->acceptTotal++;
 		if (client_sock == INVALID_SOCKET) 
 			continue;
-		//LOG(logLevel::Info, LO_TXT, "new connect " + to_string(client_sock) + " socket");
 
 		SOCKADDR_IN clientAddr;
 		int addrlen = sizeof(clientAddr);
@@ -271,7 +259,6 @@ DWORD WINAPI Network::acceptThread(LPVOID arg) {
 			
 			UINT64 sessionID = MAKE_SESSION_ID(core->sessionCount++, index);
 			s->init(sessionID, client_sock, clientAddr.sin_port, clientAddr.sin_addr.S_un.S_addr);
-			//LOGOUT_EX(logLevel::Info, LO_TXT, "lib") << "new connect " << client_sock << " socket at index " << index << LOGEND;
 
 			if (CreateIoCompletionPort((HANDLE)(s->getSocket()), core->IOCP, (ULONG_PTR)s, NULL) == NULL)
 				LOG(logLevel::Error, LO_TXT, "Error in CreateIoCompletionPort " + to_string(s->getSocket()) + " socket, error : " + to_string(GetLastError()));
@@ -302,7 +289,7 @@ DWORD WINAPI Network::workerThread(LPVOID arg)
 
 		bool GQCSresult = GetQueuedCompletionStatus(core->IOCP, &transfer, (PULONG_PTR)&sessionPtr, &overlap, INFINITE);
 		
-		if (sessionPtr == nullptr) //PQCS 에 의한 종료
+		if (sessionPtr == nullptr)
 			break;
 		else if (GQCSresult == false)
 		{
@@ -320,7 +307,6 @@ DWORD WINAPI Network::workerThread(LPVOID arg)
 				if (temp == reqEvents::sendReq)
 				{
 					serializer* _packet = (serializer*)((unsigned long long int)overlap & (~reqFilter));
-					//_packet->incReferenceCounter();
 
 					if (sessionPtr->collectSendPacket(_packet))
 					{
@@ -401,11 +387,6 @@ Network::reqEvents Network::requestCheck(void* _overlappedPtr)
 
 void Network::deleteSession(session* sessionPtr)
 {
-	//	1. IOCount 이용 그대로 하다가
-	//	2. IO 1->0 으로 만든 녀석이 deleteFlag 심고
-	//	3. 그 이후에도 변화가 있더라도
-	//	4. 실제 deleteSession 에서는 del flag가 있으면서 0인 순간에만 회수하고 삭제시도
-
 	if (InterlockedCompareExchange(&(sessionPtr->IOcount), 0x80000000, 0x00000000) != 0x00000000)
 		return;
 
@@ -414,13 +395,9 @@ void Network::deleteSession(session* sessionPtr)
 	int sock = sessionPtr->socket;
 
 	if (closesocket(sessionPtr->socket) != 0)
-	{
 		LOGOUT_EX(logLevel::Error, LO_TXT, "lib") << "close socket error " << sock << " socket, error " << GetLastError() << LOGEND;
-	}
-	else
-	{
-		//LOGOUT_EX(logLevel::Info, LO_TXT, "lib") << "close socket " << sock << " socket" << LOGEND;
-	}
+	
+
 
 	sessionPtr->bufferClear();
 
@@ -440,10 +417,8 @@ std::pair<size_t, size_t> Network::getSessionPoolMemory()
 {
 	pair<size_t, size_t> ret;
 
-	//AcquireSRWLockExclusive(&sessionPoolLock);
 	ret.first = 0;
 	ret.second = 0;
-	//ReleaseSRWLockExclusive(&sessionPoolLock);
 
 	return ret;
 }
@@ -548,25 +523,6 @@ void Network::sendReq(UINT64 sessionID, serializer* _packet)
 
 	if (_sessionPtr->decrementIO() == 0)
 		deleteSession(_sessionPtr);
-
-	/*/
-
-	session* _sessionPtr = findSession(sessionID);
-
-
-	if (_sessionPtr == nullptr)
-		return;
-
-
-	_packet->incReferenceCounter();
-	_sessionPtr->incrementIO();
-
-
-	PostQueuedCompletionStatus(IOCP, 0, (ULONG_PTR)_sessionPtr, (LPOVERLAPPED)_packet);
-
-	if (_sessionPtr->decrementIO() == 0)
-		deleteSession(_sessionPtr);
-	/*/
 }
 
 void Network::sendReq(UINT64 sessionID, packet _packet)

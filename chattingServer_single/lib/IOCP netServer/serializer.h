@@ -13,15 +13,6 @@ class packetSerializer;
 class serializer
 {
 public:
-#pragma pack(push, 1)
-	struct packetHeader {
-		char code;
-		short size;
-		char randKey;
-		char checkSum;
-	};
-#pragma pack(pop)
-
 	serializer() : bufferPtr((char*)_aligned_malloc(1024, 64)), bufferSize(1024), headPtr(bufferPtr), tailPtr(bufferPtr), useHeap(false), heap(0), referenceCounter(0) {	// c++ allocator 를 이용해 64바이트 (캐시라인) 경계에 서도록 짜보자
 
 	}																					//    aligned alloc 구현 이후
@@ -56,7 +47,6 @@ public:
 	{
 		networkHeader h(_size, _key, _checkSum);
 
-		//memcpy_s(p.buffer->getHeadPtr(), sizeof(packetHeader), &h, sizeof(packetHeader));
 		memcpy_s(getHeadPtr() - sizeof(networkHeader), sizeof(networkHeader), &h, sizeof(networkHeader));
 		moveFront(-(int)sizeof(networkHeader));
 	}

@@ -1,6 +1,6 @@
 #pragma once
-#include "IOCP/IOCP/network.h"
-#include "IOCP/IOCP/session.h"
+#include "lib/IOCP netServer/network.h"
+#include "lib/IOCP netServer/session.h"
 
 #include <vector>
 
@@ -20,7 +20,9 @@ public:
 	virtual void OnError(int code, const char* msg = "");
 
 	bool sendPacket(UINT64 sessionID, serializer* _packet);
+	bool sendPacket(UINT64 sessionID, packet _packet);
 	bool sendPacket(std::vector<UINT64>& sessionIDs, serializer* _packet);
+	bool sendPacket(std::vector<UINT64>& sessionIDs, packet _packet);
 
 	inline char getRandKey()
 	{
@@ -31,33 +33,6 @@ public:
 	{
 		return 0x32; // 50
 	}
-
-	void encryption(char* input, size_t inputSize, char* output, char staticKey, char dynamicKey)
-	{
-		char pP = 0;
-		char pE = 0;
-
-		for (int i = 0; i < inputSize; i++)
-		{
-			pP = input[i] ^ (pP + dynamicKey + 1 + i);
-			output[i] = pE = pP ^ (pE + staticKey + 1 + i);
-		}
-	}
-
-	void decryption(char* input, size_t inputSize, char* output, char staticKey, char dynamicKey)
-	{
-		char pP = 0;
-		char pE = 0;
-
-		for (int i = 0; i < inputSize; i++)
-		{
-			char p = input[i] ^ (pE + staticKey + 1 + i);
-			pE = input[i];
-
-			output[i] = p ^ (pP + dynamicKey + 1 + i);
-			pP = p;
-		}
-	}
-
+	
 	chattingContent* content;
 };

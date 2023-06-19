@@ -386,9 +386,6 @@ serializer& serializer::operator >> (double& v) {
 
 
 serializer& serializer::operator = (const serializer& v) {
-	//v.incReferenceCounter();
-	//this->referenceCounter = v.referenceCounter;
-
 	clear();
 	resize(v.bufferSize);
 

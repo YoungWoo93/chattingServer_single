@@ -130,16 +130,15 @@ private:
 		friend LockFreeQueue;
 	public:
 		nodePool()
-			:maxSize(0), useSize(0), topKey(0), heap(0){//heap(HeapCreate(0, 0, 0)) {
+			:maxSize(0), useSize(0), topKey(0), heap(0){
 
 		}
 
 		nodePool(int _size)
-			: maxSize(_size), useSize(0), topKey(0), heap(0)//heap(HeapCreate(0, 0, 0))
+			: maxSize(_size), useSize(0), topKey(0), heap(0)
 		{
 			for (int i = 0; i < _size; i++)
 			{
-				//node* newNode = (node*)HeapAlloc(heap, 0, sizeof(node));
 				node* newNode = (node*)malloc(sizeof(node));
 				newNode->poolNext = topKey;
 
@@ -153,11 +152,8 @@ private:
 				topKey = temp->poolNext;
 
 				temp->~node();
-				//HeapFree(heap, 0, temp)
 				free(temp);
 			}
-
-			//HeapDestroy(heap);
 		}
 
 
@@ -171,7 +167,6 @@ private:
 				topKey = temp->poolNext;
 
 				temp->~node();
-				//HeapFree(heap, 0, temp);
 				free(temp);
 
 				if (topKey == 0)

@@ -158,10 +158,6 @@ public:
 		node* n = np.Alloc();
 
 		n->value = value;
-		//{
-		//	if (InterlockedIncrement(&n->value) != 1)
-		//		printf("error\n");
-		//}
 
 		UINT64 compareKey = 0;
 		UINT64 pushKey = MAKE_KEY(n, InterlockedIncrement(&pushCount));
@@ -174,7 +170,6 @@ public:
 			if (InterlockedCompareExchange(&topKey, pushKey, compareKey) == compareKey)
 			{
 				InterlockedIncrement(&stackSize);
-				//return std::make_pair<UINT64, UINT64>((UINT64)MAKE_NODEPTR(compareKey), (UINT64)n);
 
 				break;
 			}
@@ -197,9 +192,7 @@ public:
 			{
 				InterlockedDecrement(&stackSize);
 				*n = popNode->value;
-				//InterlockedDecrement(&popNode->value);
 				np.Free(popNode);
-				//return std::make_pair<UINT64, UINT64>((UINT64)popNode, (UINT64)MAKE_NODEPTR(nextTopKey));
 				break;
 			}
 		}

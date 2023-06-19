@@ -37,12 +37,7 @@ public:
 	/// 
 	/// </summary>
 	/// <returns>
-	/// true : 정상동작 상태
-	/// false : 어떤 이유로든 정상 동작 불가능
 	/// </returns>
-	/// 
-	//[질문1] 연관
-	//bool sendIO();
 	void sendIO();
 
 	/// <summary>
@@ -75,8 +70,6 @@ public:
 	/// false : 어떤 이유로든 정상 동작 불가능
 	/// </returns>
 	/// 
-	//[질문1] 연관
-	//bool recvIO();
 	void recvIO();
 
 

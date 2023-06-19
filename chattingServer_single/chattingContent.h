@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IOCP/IOCP/packet.h"
+#include "lib/IOCP netServer/packet.h"
 
 #include <unordered_map>
 #include <unordered_set>
@@ -8,6 +8,8 @@
 #include <Windows.h>
 
 #include "customDataStructure/customDataStructure/queue_LockFree_TLS.h"
+
+#include "MemoryPool/MemoryPool/MemoryPool.h"
 
 using namespace std;
 
@@ -33,32 +35,38 @@ struct userData
 enum class jobID {
 	newUserData,
 	deleteUserData,
-	packetProcess,
+	login,
+	moveSector,
+	sendMessage,
 };
 
 struct JobStruct
 {
 	JobStruct(jobID _id, userID _targetID, serializer* __serializer) : id(_id), targetID(_targetID), _serializer(__serializer) {
-		//_serializer->incReferenceCounter();
+		_serializer->incReferenceCounter();
 	}
-	JobStruct(jobID _id, userID _targetID) : id(_id), targetID(_targetID), _serializer(nullptr) {
+	JobStruct(jobID _id, userID _targetID) : id(_id), targetID(_targetID), _serializer() {
 	}
-	JobStruct() : id(jobID::newUserData), targetID(0), _serializer(nullptr) {
+	JobStruct() : id(jobID::newUserData), targetID(0), _serializer() {
 	}
 
 	~JobStruct() {
-
-		if (_serializer != nullptr)
-		{
-			int temp = _serializer->decReferenceCounter();
-			if (temp == 0)
-				serializerFree(_serializer);
-		}
+		if (_serializer != nullptr && _serializer->decReferenceCounter() == 0)
+			serializerPool.Free(_serializer);
 	}
 
 	jobID id;
 	userID targetID;
 	serializer* _serializer;
+	unsigned long long int accountNo;
+	WCHAR* contentID;
+	WCHAR* contentNickname;
+	char* sessionKey;
+	short sectorX;
+	short sectorY;
+	WCHAR* message;
+	short msgLen;
+
 };
 
 class chattingContent

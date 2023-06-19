@@ -3,7 +3,6 @@
 #include "serializer.h"
 
 #include "MemoryPool/MemoryPool/MemoryPool.h"
-//#include "lib/memoryPool/objectPool.h"
 
 #include "lib/monitoringTools/messageLogger.h"
 #include "lib/monitoringTools/performanceProfiler.h"
